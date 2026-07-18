@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indie Hacker 产品发现导航</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>" />
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --card-hover: #222;
+      --border: #2a2a2a;
+      --text: #e8e8e8;
+      --text-dim: #888;
+      --accent: #6c5ce7;
+      --accent-glow: rgba(108, 92, 231, 0.15);
+      --green: #00d68f;
+      --orange: #ff9f43;
+      --pink: #ff6b9d;
+      --blue: #54a0ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 48px 20px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      width: 600px;
+      height: 600px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      position: relative;
+    }
+    header h1 span { color: var(--accent); }
+    header p {
+      color: var(--text-dim);
+      margin-top: 8px;
+      font-size: 1rem;
+      position: relative;
+    }
+
+    .subtitle-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(108, 92, 231, 0.25);
+      color: var(--accent);
+      font-size: 0.82rem;
+      position: relative;
+    }
+
+    /* Layout */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
+
+    /* Stats bar */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 20px 0 32px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-item .num {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-item .label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 40px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-header .icon {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .section-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .section-header .count {
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      background: var(--card);
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      background: var(--card-hover);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .card-name {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .card-name .domain {
+      font-weight: 400;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+    }
+    .card-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .badge-hot    { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
+    .badge-new    { background: rgba(0, 214, 143, 0.15); color: var(--green); }
+    .badge-tool   { background: rgba(84, 160, 255, 0.15); color: var(--blue); }
+    .badge-zh     { background: rgba(255, 159, 67, 0.15); color: var(--orange); }
+
+    .card-desc {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .card-tags span {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-dim);
+    }
+    .card-link {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--accent);
+      word-break: break-all;
+    }
+    .card:hover .card-link { text-decoration: underline; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.8rem; }
+      .grid { grid-template-columns: 1fr; }
+      .stats { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🚀 <span>Indie Hacker</span> 产品发现导航</h1>
+  <p>关注全球独立开发者产品的一站式入口 · 替代 Product Hunt 的 N 种方式</p>
+  <span class="subtitle-badge">收录 30+ 平台 · 持续更新</span>
+</header>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-item"><div class="num">6</div><div class="label">PH 替代平台</div></div>
+    <div class="stat-item"><div class="num">4</div><div class="label">社区 & 讨论区</div></div>
+    <div class="stat-item"><div class="num">5</div><div class="label">自动化发现</div></div>
+    <div class="stat-item"><div class="num">4</div><div class="label">精选 curated</div></div>
+    <div class="stat-item"><div class="num">5</div><div class="label">中文社区</div></div>
+  </div>
+
+  <!-- Section 1: PH Alternatives -->
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">🚀</span>
+      <h2>Product Hunt 替代平台</h2>
+      <span class="count">6</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://uneed.best" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Uneed <span class="domain">· uneed.best</span></span>
+          <span class="card-badge badge-hot">🔥 91K/月</span>
+        </div>
+        <div class="card-desc">社区投票制产品发现平台，月访问量 91K，DA 59，是 PH 最有力的替代之一。</div>
+        <div class="card-tags"><span>投票制</span><span>高流量</span></div>
+      </a>
+
+      <a class="card" href="https://peerlist.io/launchpad" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Peerlist Launchpad <span class="domain">· peerlist.io</span></span>
+          <span class="card-badge badge-hot">🔥 199K/月</span>
+        </div>
+        <div class="card-desc">除了产品发布，还整合了求职网络、个人品牌建设，月访问 199K，DA 64。</div>
+        <div class="card-tags"><span>产品发布</span><span>求职</span><span>社区</span></div>
+      </a>
+
+      <a class="card" href="https://microlaunch.net" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Microlaunch <span class="domain">· microlaunch.net</span></span>
+          <span class="card-badge">79K/月</span>
+        </div>
+        <div class="card-desc">专注于微启动和小产品，门槛低，适合早期项目获取初始用户。</div>
+        <div class="card-tags"><span>微启动</span><span>低门槛</span></div>
+      </a>
+
+      <a class="card" href="https://fazier.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Fazier <span class="domain">· fazier.com</span></span>
+          <span class="card-badge">17K/月</span>
+        </div>
+        <div class="card-desc">社区氛围更友好、更 founder-first，适合获得真实反馈而非单纯刷票。</div>
+        <div class="card-tags"><span>社区友好</span><span>反馈</span></div>
+      </a>
+
+      <a class="card" href="https://devhunt.org" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Dev Hunt <span class="domain">· devhunt.org</span></span>
+          <span class="card-badge">62K/月</span>
+        </div>
+        <div class="card-desc">面向开发者工具的产品发布平台，技术氛围浓厚，DA 57。</div>
+        <div class="card-tags"><span>开发者工具</span><span>技术向</span></div>
+      </a>
+
+      <a class="card" href="https://tinystartups.co" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Tiny Startups <span class="domain">· tinystartups.co</span></span>
+          <span class="card-badge badge-new">🌱 小而美</span>
+        </div>
+        <div class="card-desc">专注小而美的独立产品，强调产品质量而非规模。</div>
+        <div class="card-tags"><span>独立产品</span><span>精选</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 2: Communities -->
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">💬</span>
+      <h2>社区 & 讨论区</h2>
+      <span class="count">4</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://indiehackers.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Indie Hackers <span class="domain">· indiehackers.com</span></span>
+          <span class="card-badge badge-hot">🔥 必看</span>
+        </div>
+        <div class="card-desc">独立开发者最大社区。创始人分享收入、产品历程、营销策略，内容质量极高。</div>
+        <div class="card-tags"><span>收入分享</span><span>社区</span><span>访谈</span></div>
+      </a>
+
+      <a class="card" href="https://news.ycombinator.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Hacker News <span class="domain">· news.ycombinator.com</span></span>
+          <span class="card-badge badge-hot">🔥 必看</span>
+        </div>
+        <div class="card-desc">技术圈最硬核的产品展示区。关注 <strong>Show HN</strong> 标签，每天都有新产品发布。</div>
+        <div class="card-tags"><span>Show HN</span><span>技术</span><span>讨论</span></div>
+      </a>
+
+      <a class="card" href="https://reddit.com/r/SideProject" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">r/SideProject / r/indiebiz <span class="domain">· reddit.com</span></span>
+          <span class="card-badge">Reddit</span>
+        </div>
+        <div class="card-desc">开发者自发分享产品，互动真实，适合获取早期用户反馈。</div>
+        <div class="card-tags"><span>Reddit</span><span>社区</span><span>反馈</span></div>
+      </a>
+
+      <a class="card" href="https://trylaunch.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Launch <span class="domain">· trylaunch.ai</span></span>
+          <span class="card-badge badge-new">✨ 新兴</span>
+        </div>
+        <div class="card-desc">"Vibe coder" 新兴社区。founder-first 氛围，由社区投票发现好产品。</div>
+        <div class="card-tags"><span>新兴</span><span>社区驱动</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 3: Auto Discovery -->
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">🤖</span>
+      <h2>自动化发现 & 聚合</h2>
+      <span class="count">5</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://indiestore.co" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">IndieStore <span class="domain">· indiestore.co</span></span>
+          <span class="card-badge badge-new">✨ 推荐</span>
+        </div>
+        <div class="card-desc">自动抓取全网独立产品，24/7 索引，无需手动提交。100+ 产品持续收录。</div>
+        <div class="card-tags"><span>自动抓取</span><span>24/7</span></div>
+      </a>
+
+      <a class="card" href="https://productlookout.io" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Product Lookout <span class="domain">· productlookout.io</span></span>
+          <span class="card-badge badge-new">✨ 推荐</span>
+        </div>
+        <div class="card-desc">聚合 GH Stars + PH 投票 + HN 讨论 + Reddit 热度，按 traction 信号排序，不用一个个跑。</div>
+        <div class="card-tags"><span>信号聚合</span><span>多维度</span></div>
+      </a>
+
+      <a class="card" href="https://www.thehackstack.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">The Hack Stack <span class="domain">· thehackstack.com</span></span>
+          <span class="card-badge">每日精选</span>
+        </div>
+        <div class="card-desc">每日精选新鲜 indie 产品 — 创意、趋势、热门产品一网打尽。</div>
+        <div class="card-tags"><span>每日精选</span><span>新鲜</span></div>
+      </a>
+
+      <a class="card" href="https://buildhop.io" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">BuildHop <span class="domain">· buildhop.io</span></span>
+          <span class="card-badge">新发现</span>
+        </div>
+        <div class="card-desc">按浏览热度 / 停留时长排名，不是简单的投票制。反映真实关注度。</div>
+        <div class="card-tags"><span>行为排名</span><span>真实热度</span></div>
+      </a>
+
+      <a class="card" href="https://www.emerged.app" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Emerged <span class="domain">· emerged.app</span></span>
+          <span class="card-badge">个性化</span>
+        </div>
+        <div class="card-desc">无投票游戏的个性化推荐，随着你的收藏行为越推越准。</div>
+        <div class="card-tags"><span>个性化</span><span>推荐</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 4: Curated -->
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">🧭</span>
+      <h2>精选 curated 平台</h2>
+      <span class="count">4</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://betalist.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">BetaList <span class="domain">· betalist.com</span></span>
+          <span class="card-badge badge-tool">经典</span>
+        </div>
+        <div class="card-desc">老牌经典，专注 pre-launch 阶段的早期产品。用户就是来找新东西的。</div>
+        <div class="card-tags"><span>Pre-launch</span><span>经典</span></div>
+      </a>
+
+      <a class="card" href="https://theindieatlas.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">The Indie Atlas <span class="domain">· theindieatlas.com</span></span>
+          <span class="card-badge badge-tool">独立精神</span>
+        </div>
+        <div class="card-desc">只收录独立/非 VC 驱动的软件，偏开源。支持独立开发者，对抗资本垄断。</div>
+        <div class="card-tags"><span>独立</span><span>非VC</span><span>开源</span></div>
+      </a>
+
+      <a class="card" href="https://www.indietool.io" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">IndieTool <span class="domain">· indietool.io</span></span>
+          <span class="card-badge">1132+ 产品</span>
+        </div>
+        <div class="card-desc">1132+ 独立创始人产品数据库，可按分类浏览，也适合找 startup idea。</div>
+        <div class="card-tags"><span>数据库</span><span>搜索</span></div>
+      </a>
+
+      <a class="card" href="https://ignitae.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Ignitae <span class="domain">· ignitae.com</span></span>
+          <span class="card-badge badge-new">结构化反馈</span>
+        </div>
+        <div class="card-desc">提交产品后获得真实 Maker 的结构化反馈，而非只是 "looks cool"。</div>
+        <div class="card-tags"><span>反馈</span><span>社区互助</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 5: Chinese Communities -->
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">🇨🇳</span>
+      <h2>中文社区 & 导航</h2>
+      <span class="count">5</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://chdh.me" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">出海导航 <span class="domain">· chdh.me</span></span>
+          <span class="card-badge badge-zh">🇨🇳 出海</span>
+        </div>
+        <div class="card-desc">出海工具评测 + 导航，覆盖 2245+ 工具、37 篇深度评测。跨境收款、建站、运营全覆盖。</div>
+        <div class="card-tags"><span>出海</span><span>工具评测</span><span>跨境</span></div>
+      </a>
+
+      <a class="card" href="https://www.indienav.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">独立开发者导航 <span class="domain">· indienav.com</span></span>
+          <span class="card-badge badge-zh">🇨🇳 导航</span>
+        </div>
+        <div class="card-desc">包含 HackerNews 中文版、工具、社区汇总，面向中文独立开发者的一站式导航。</div>
+        <div class="card-tags"><span>导航</span><span>HN中文版</span></div>
+      </a>
+
+      <a class="card" href="https://www.theskipto.xyz" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">SkipTo 导航 <span class="domain">· theskipto.xyz</span></span>
+          <span class="card-badge badge-zh">🇨🇳 200+ 工具</span>
+        </div>
+        <div class="card-desc">200+ 精选开发工具，按 16 大分类组织。从灵感到变现全流程覆盖。</div>
+        <div class="card-tags"><span>工具大全</span><span>分类</span></div>
+      </a>
+
+      <a class="card" href="https://www.zcrdh.com/sites/19210.html" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">Indie Hacker Tools <span class="domain">· zcrdh.com</span></span>
+          <span class="card-badge badge-zh">🇨🇳 精选</span>
+        </div>
+        <div class="card-desc">华人维护的出海工具精选导航，建站、支付、分析模块整理，标注免费/付费。</div>
+        <div class="card-tags"><span>工具导航</span><span>免费推荐</span></div>
+      </a>
+
+      <a class="card" href="https://www.fxdst.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="card-name">方向舵 <span class="domain">· fxdst.com</span></span>
+          <span class="card-badge badge-zh">🇨🇳 AI+出海</span>
+        </div>
+        <div class="card-desc">面向独立开发者 + 出海 SaaS + AI 产品的工具导航，聚合编程、支付、SEO 等实用资源。</div>
+        <div class="card-tags"><span>AI</span><span>SaaS</span><span>出海</span></div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Made with ❤️ for Indie Hackers · 数据更新于 2026 年 · <a href="https://github.com" target="_blank" rel="noopener">提建议 / 补充</a>
+</footer>
+
+</body>
+</html>
