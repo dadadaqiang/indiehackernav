@@ -1,6 +1,6 @@
 # 🚀 Indie Hacker 产品发现导航
 
-> 关注全球独立开发者产品的一站式入口 · 替代 Product Hunt 的 N 种方式
+> 关注全球独立开发者产品的一站式入口 · Product Hunt 及 30+ 替代平台
 
 收录 **30+ 平台**，涵盖 PH 替代品、社区讨论、自动化聚合、精选 curated、中文出海资源五大类，帮助独立开发者高效发现新产品、获取灵感、研究竞品。
 
@@ -10,7 +10,7 @@
 
 | 板块 | 数量 | 说明 |
 |------|:----:|------|
-| 🚀 Product Hunt 替代平台 | 6 | Uneed、Peerlist、Microlaunch 等社区投票/发布平台 |
+| 🚀 产品发现平台 | 7 | Product Hunt + Uneed、Peerlist、Microlaunch 等社区投票/发布平台 |
 | 💬 社区 & 讨论区 | 4 | Indie Hackers、HN Show HN、Reddit、Launch |
 | 🤖 自动化发现 & 聚合 | 5 | IndieStore、Product Lookout 等自动爬取/信号聚合 |
 | 🧭 精选 curated 平台 | 4 | BetaList、The Indie Atlas 等人工精选 |
